@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." name="UmpleDeps" xmlns:ivy="antlib:org.apache.ivy.ant">
-
-  <include file="_template.xml" />
+<project basedir=".." name="UmpleDeps" xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <!-- ```````````````````````````
     Environment Variables
@@ -18,52 +16,7 @@
   <property name="umple.deps.manual.dir" value="${umple.deps.dir}/manual" />
   <property name="umple.last.jar.file" value="${umple.deps.dir}/umple-${umple.version}.jar" />
 
-  <!-- Install Ivy: -->
-
-  <target name="ivy:bootstrap" description="Install ivy">
-  
-    <echo>Installing Ivy v${ivy.install.version}</echo>
-    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
-         dest="${ivy.jar.file}" usetimestamp="true" />
-
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.file}" />
-
-    <ivy:settings file="${basedir}/build/ivysettings.xml"/>
-  </target>
-
-  <target name="deps:umple" description="--> retrieve latest umple version.">
-    <!-- this isn't actually Ivy, but its the smartest place to do this; eventually we'll use Ivy :) -->
-    <echo>Fetching umple-${umple.version}</echo>
-
-    <echo level="warning">WARNING: This is merely wget-ing http://try.umple.org/scripts/umple.jar</echo>
-    <mkdir dir="${umple.deps.dir}" />
-    <get src="http://try.umple.org/scripts/umple.jar" 
-         dest="${umple.last.jar.file}"
-         usetimestamp="true" />
-    
-    <path id="umple.last.classpath">
-      <pathelement location="${umple.last.jar.file}"/>
-    </path>
-
-    <taskdef name="umplec" classname="cruise.umple.util.UmplecAntTask" classpathref="umple.last.classpath" />
-  </target>
-
-  <target name="deps:manual" description="--> retrieve manual dependencies">
-    <echo>Fetching manual dependencies</echo>
-    <mkdir dir="${umple.deps.manual.dir}" />
-
-    <echo>Fetching org.eclipse.cdt.core_5.5.0.jar</echo>
-
-    <echo level="warning">WARNING: This is merely wget-ing https://umple.googlecode.com/svn/trunk/lib/umplificatorplugins/org.eclipse.cdt.core_5.5.0*.jar</echo>
-    <mkdir dir="${umple.deps.manual.dir}" />
-    <get src="https://umple.googlecode.com/svn/trunk/lib/umplificatorplugins/org.eclipse.cdt.core_5.5.0.201309180223.jar" 
-         dest="${umple.deps.manual.dir}/"
-         usetimestamp="true" />
-    
-    <path id="umple.manual.classpath">
-      <fileset file="${umple.deps.manual.dir}/*.jar" />
-    </path>
-  </target>
+  <!-- Macros used to work nicely with Ivy -->
 
   <macrodef name="deps-get-path">
     <attribute name="conf"    description="Ivy configuration to load"/>
@@ -109,13 +62,65 @@
     </sequential>
   </macrodef>
 
-  <target name="deps:build" description="--> retrieve dependencies with ivy">
+  <macrodef name="deps-declare-taskdef">
+    <sequential>
+      <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" />
+      <taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+    </sequential>
+  </macrodef>
+
+  <!-- Install Ivy: -->
+  <target name="bootstrap" description="Install Ivy and Build requirements">
+
+    <mkdir dir="${user.home.ant}"/>
+  
+    <echo>Installing Ivy v${ivy.install.version}</echo>
+    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" 
+         dest="${ivy.jar.file}" usetimestamp="true" />
+
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.jar.file}" />
+
     <echo>Getting Build dependencies</echo>
-    <antcall target="ivy:bootstrap"/>
+
+    <ivy:settings file="${basedir}/build/ivysettings.xml"/>
 
     <deps-resolve-private conf="build" 
                           pathid="build.ivy.classpath" 
                           pattern="${user.home.ant}/[artifact].[ext]" transitive="false"/>
+  </target>
+
+  <target name="deps:umple" description="--> retrieve latest umple version.">
+    <!-- this isn't actually Ivy, but its the smartest place to do this; eventually we'll use Ivy :) -->
+    <echo>Fetching umple-${umple.version}</echo>
+
+    <echo level="warning">WARNING: This is merely wget-ing http://try.umple.org/scripts/umple.jar</echo>
+    <mkdir dir="${umple.deps.dir}" />
+    <get src="http://try.umple.org/scripts/umple.jar" 
+         dest="${umple.last.jar.file}"
+         usetimestamp="true" />
+    
+    <path id="umple.last.classpath">
+      <pathelement location="${umple.last.jar.file}"/>
+    </path>
+
+    <taskdef name="umplec" classname="cruise.umple.util.UmplecAntTask" classpathref="umple.last.classpath" />
+  </target>
+
+  <target name="deps:manual" description="--> retrieve manual dependencies">
+    <echo>Fetching manual dependencies</echo>
+    <mkdir dir="${umple.deps.manual.dir}" />
+
+    <echo>Fetching org.eclipse.cdt.core_5.5.0.jar</echo>
+
+    <echo level="warning">WARNING: This is merely wget-ing https://umple.googlecode.com/svn/trunk/lib/umplificatorplugins/org.eclipse.cdt.core_5.5.0*.jar</echo>
+    <mkdir dir="${umple.deps.manual.dir}" />
+    <get src="https://umple.googlecode.com/svn/trunk/lib/umplificatorplugins/org.eclipse.cdt.core_5.5.0.201309180223.jar" 
+         dest="${umple.deps.manual.dir}/"
+         usetimestamp="true" />
+    
+    <path id="umple.manual.classpath">
+      <fileset file="${umple.deps.manual.dir}/*.jar" />
+    </path>
   </target>
 
 </project>

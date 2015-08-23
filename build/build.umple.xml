@@ -7,8 +7,6 @@
   ``````````````````````````` -->
   <import file="_template.xml" />
 
-  <import file="build.deps.xml" />
-
   <property name="project.path" value="cruise.umple"/>
   <property name="xtext.project.path" value="cruise.umple.xtext"/>
   <property name="bin.path" value="${project.path}/bin"/>
@@ -483,7 +481,6 @@
     and generate a 
   -->
   <target name="first-build">
-    <antcall target="deps:build" />
     <antcall target="deps:umple" />
 
     <antcall target="clean" />
@@ -505,7 +502,6 @@
     as your code will be run against the "latest" Umpled Umple.
    -->
   <target name="build" >
-    <antcall target="deps:build" />
     <antcall target="deps:umple" />
 
     <antcall target="clean" />

@@ -11,6 +11,7 @@
   <import file="_${myenv}.xml" />
 
   <import file="build.deps.xml" />
+  <deps-declare-taskdef />
 
   <!-- ```````````````````````````
     Clean up and initialize any potential byproduct
@@ -80,7 +81,7 @@
 
   <target name="template.test">
     <deps-get-path conf="test" pathid="test.ivy.classpath" />
-    
+
     <junit fork="yes" forkmode="perBatch" haltonfailure="${haltonfailure}" showoutput="${showJunitOutput}" printsummary="${showJunitSummary}" >
       <!-- <jmvarg value="-XstartOnFirstThread"/> -->
       <formatter type="xml" unless="${showJunitOutput}"/>
