@@ -2,13 +2,11 @@
 <project basedir=".." default="build" name="Umple" xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <import file="build.deps.xml" />  
+  <deps-declare-taskdef />
 
   <target name="build">
     <trycatch property="foo" reference="bar">
       <try>
-        <echo>Fetching Ivy and Build dependencies</echo>
-        <antcall target="ivy:build" />
-
         <antcall target="qaBuildingPage" />
 
         <echo>Building Sandbox for Testing Infrastructure</echo>
