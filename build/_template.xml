@@ -80,6 +80,8 @@
   ``````````````````````````` -->
 
   <target name="template.test">
+
+    <deps-get-path conf="core" pathid="core.ivy.classpath" />
     <deps-get-path conf="test" pathid="test.ivy.classpath" />
 
     <junit fork="yes" forkmode="perBatch" haltonfailure="${haltonfailure}" showoutput="${showJunitOutput}" printsummary="${showJunitSummary}" >
@@ -93,6 +95,7 @@
         </fileset>
       </batchtest>
       <classpath refid="project.classpath"/>
+      <classpath refid="core.ivy.classpath"/>
       <classpath refid="test.ivy.classpath"/>
     </junit>
 
